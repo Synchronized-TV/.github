@@ -18,7 +18,7 @@ This repository centralizes the **templates** and **security references** used a
 Organization-wide settings protect our repositories:
 - **Branch Protection Rules** on `main` (and optionally `release/*`)
 - **CodeQL** static analysis on Pull Requests (org configuration)
-- **Dependabot** for dependency monitoring (prod repos)
+- **Dependabot** for dependency monitoring
 - **Secret Scanning & Push Protection** for secret detection
 - **Dependency Review** visible in PRs
 
