@@ -1,0 +1,59 @@
+name: bump-version-pr
+on:
+  workflow_call:
+    inputs:
+      bump:
+        type: string
+        default: "patch" # patch|minor|major
+      base:
+        type: string
+        default: "main"
+      node:
+        type: string
+        default: "20"
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node }}
+
+      - name: Version bump (no tag)
+        id: bump
+        run: |
+          npm version "${{ inputs.bump }}" --no-git-tag-version
+          echo "ver=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+
+      - name: Create bump branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BR="release/bump-v${{ steps.bump.outputs.ver }}"
+          git checkout -b "$BR"
+          git add package.json package-lock.json || true
+          git commit -m "chore(release): v${{ steps.bump.outputs.ver }}"
+          git push -u origin "$BR"
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: release/bump-v${{ steps.bump.outputs.ver }}
+          base: ${{ inputs.base }}
+          title: "chore(release): v${{ steps.bump.outputs.ver }}"
+          body: "Automated version bump to v${{ steps.bump.outputs.ver }}"
+          labels: release
