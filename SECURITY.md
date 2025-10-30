@@ -1,18 +1,27 @@
-# Security Policy
+# 🔐 Security Policy
 
 Please **do not create a public issue** to report a vulnerability.
 
 ## 📢 Reporting
 
-If you find a security issue:
-- Email **security@synchronized.tv**
-- Message **Slack `#alert-security`**
-- Use **Incident.io** for confirmed incidents
+If you discover a security issue or vulnerability:
+
+- Email: **security@synchronized.tv**  
+- Message: **Slack `#alert-security`**  
+- For confirmed incidents: use **Incident.io**
 
 We respond within **one business day (24h)**.
 
+---
+
 ## ⚙️ Monitoring
 
-- GitHub **Dependabot**, **CodeQL**, and **Secret Scanning** are active on all repositories  
-- Alerts are sent to **Slack `#alert-security`**  
-- Confirmed issues are handled in **Incident.io** and tracked until resolved
+- **Dependabot**, **CodeQL**, and **Secret Scanning** are active on all repositories.  
+- Alerts are automatically forwarded to **Slack `#alert-security`**.  
+- Confirmed incidents are tracked in **Incident.io** until resolution.
+
+---
+
+## 🔒 Internal Notes
+
+Sensitive procedures (e.g., token rotation, audit logs) are managed in the **private** repository [Synchronized-TV/.internal](https://github.com/Synchronized-TV/.internal).
