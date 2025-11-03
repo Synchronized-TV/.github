@@ -19,6 +19,7 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 | **Workflows** | Reusable CI/CD pipelines for versioning and publishing |
 | **Templates** | Pull Request, Issue, and Security Incident templates |
 | **Security Policy** | Guidelines for reporting and managing vulnerabilities |
+| **Contributing Guide** | Organization-wide contribution rules and conventions |
 
 ---
 
@@ -52,8 +53,21 @@ jobs:
       node: "20"
     secrets: inherit
 ```
+
 ---
 
+## 🧭 Contributing
+
+Organization-wide contribution guidelines are defined in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
+All repositories follow the same rules for:
+- **Branch naming** (`feat/`, `fix/`, `chore/`, `release/`, etc.)
+- **Commit conventions** (using [Conventional Commits](https://www.conventionalcommits.org/))
+- **Pull request reviews** and **security policies**
+
+> 💡 See the contributing guide for naming rules, PR best practices, and security standards.
+
+---
 
 ## 🛡️ Automated Security (Organization Level)
 
@@ -74,6 +88,7 @@ The following protections apply to all repositories within **Synchronized-TV**:
 | File | Purpose |
 |------|----------|
 | [Security Policy](./SECURITY.md) | How to report and handle vulnerabilities |
+| [Contributing Guide](./CONTRIBUTING.md) | Organization-wide contribution standards |
 | [Pull Request Template](./PULL_REQUEST_TEMPLATE.md) | Standard PR format for all repositories |
 | [Issue Templates](./ISSUE_TEMPLATE/) | Default issue templates (bug, feature, etc.) |
 | [Reusable Workflows](./.github/workflows/) | Shared release and publish workflows |
