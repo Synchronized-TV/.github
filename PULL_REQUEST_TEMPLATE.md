@@ -1,12 +1,15 @@
 ## 🎯 Context
-Linked Issue: #
+Linked issue: #
 
-## ✅ Security & Quality Checklist
-- [ ] No secrets or credentials committed  
-- [ ] Dependencies reviewed (Dependency Review check passed)  
-- [ ] Tests executed and validated  
-- [ ] Reviewed by a CODEOWNER  
-- [ ] Documentation updated if needed  
+Short summary of the change.
 
-## 🧩 Notes
-Security / Infrastructure / Data impact:
+## 📝 Documentation
+- [ ] Updated if needed
+
+> ⚙️ CI will automatically verify dependencies, tests, linting, and security checks.
+
+## 💡 Notes / Impact
+Security, infra, or data considerations (if any):
+
+## 🚀 Deployment
+Steps or special instructions (if any):
