@@ -1,0 +1,88 @@
+name: npm-release
+
+on:
+  push:
+    branches: [main]   # Trigger when a PR is merged into main (for tagging)
+    tags: ['v*']       # Trigger when a version tag is pushed (for publishing)
+
+permissions:
+  contents: write      # Required to push tags to the repository
+
+jobs:
+  # -------------------------------
+  # Create tag based on package.json version
+  # -------------------------------
+  tag:
+    if: github.ref_type == 'branch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required to access tags and full commit history
+
+      - name: Read version from package.json
+        id: pkg
+        shell: bash
+        run: |
+          set -euo pipefail
+          ver=$(node -p 'require("./package.json").version')
+          echo "ver=$ver" >> "$GITHUB_OUTPUT"
+          echo "Version detected: $ver"
+
+      - name: Create tag (if not exists)
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.pkg.outputs.ver }}"
+          git fetch --tags
+
+          # Skip if tag already exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists. Skipping."
+            exit 0
+          fi
+
+          # Configure Git identity
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create new annotated tag
+          git tag -a "$TAG" -m "$TAG"
+
+          # Push tag only (no push on main)
+          git push origin "refs/tags/$TAG:refs/tags/$TAG"
+
+  # -------------------------------
+  # Publish package to npm
+  # -------------------------------
+  publish:
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Configure npm authentication
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "registry=https://registry.npmjs.org/" > .npmrc
+          echo "@synchronized:registry=https://registry.npmjs.org/" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+          echo "always-auth=true" >> .npmrc
+          echo ".npmrc created successfully."
+
+      - name: Publish package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Publishing package to npm..."
+          npm publish
+          echo "✅ Publish completed successfully!"
