@@ -1,9 +1,14 @@
 name: npm-release
 
 on:
-  push:
-    branches: [main]   # Trigger when a PR is merged into main (for tagging)
-    tags: ['v*']       # Trigger when a version tag is pushed (for publishing)
+  workflow_call:
+    inputs:
+      node:
+        type: string
+        default: '20'
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 permissions:
   contents: write      # Required to push tags to the repository
