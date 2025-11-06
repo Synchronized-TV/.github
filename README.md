@@ -28,7 +28,7 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 ### 🔁 `bump-version-pr.yml`
 Creates a Pull Request that bumps the version (`patch`, `minor`, or `major`) without publishing.
 
-### 🚀 `publish-on-merge.yml`
+### 🚀 `npm-release.yml`
 On merge to `main`, tags the release and publishes the package to npm.
 
 #### Example usage
