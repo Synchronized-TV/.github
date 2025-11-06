@@ -15,54 +15,64 @@ permissions:
 
 jobs:
   # -------------------------------
-  # Create tag based on package.json version
+  # Create tag only if the version changed
   # -------------------------------
   tag:
-    if: github.ref_type == 'branch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.state.outputs.new_tag }}   # 'true' if a new tag was created during this run
+      version: ${{ steps.state.outputs.version }}   # current version from package.json
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required to access tags and full commit history
+          fetch-depth: 0  # Required to read previous commit and push tags
 
-      - name: Read version from package.json
-        id: pkg
+      - name: Compute tag state (compare versions and create tag if needed)
+        id: state
         shell: bash
         run: |
           set -euo pipefail
-          ver=$(node -p 'require("./package.json").version')
-          echo "ver=$ver" >> "$GITHUB_OUTPUT"
-          echo "Version detected: $ver"
 
-      - name: Create tag (if not exists)
-        shell: bash
-        run: |
-          set -euo pipefail
-          TAG="v${{ steps.pkg.outputs.ver }}"
-          git fetch --tags
+          # Read current version from package.json on the current commit
+          CUR="$(node -p 'require("./package.json").version')"
+          echo "version=${CUR}" >> "$GITHUB_OUTPUT"
 
-          # Skip if tag already exists
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists. Skipping."
+          # Read previous version (from previous commit), fallback to empty if not available
+          PREV="$(git show HEAD^:package.json 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).version)}catch{console.log("")}})')"
+          echo "Current: ${CUR} | Previous: ${PREV}"
+
+          # If version did not change, skip tagging/publishing
+          if [ "${CUR}" = "${PREV}" ]; then
+            echo "No version change detected. Skipping tag and publish."
+            echo "new_tag=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Configure Git identity
+          # Ensure tag does not already exist
+          TAG="v${CUR}"
+          git fetch --tags
+          if git rev-parse "${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists. Skipping creation."
+            echo "new_tag=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Create and push the new tag (push tag ref only, no branch push)
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "${TAG}"
+          git push origin "refs/tags/${TAG}:refs/tags/${TAG}"
 
-          # Create new annotated tag
-          git tag -a "$TAG" -m "$TAG"
-
-          # Push tag only (no push on main)
-          git push origin "refs/tags/$TAG:refs/tags/$TAG"
+          echo "Created tag ${TAG}"
+          echo "new_tag=true" >> "$GITHUB_OUTPUT"
 
   # -------------------------------
-  # Publish package to npm
+  # Publish package to npm (only when a new tag was created)
   # -------------------------------
   publish:
-    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    needs: tag
+    if: needs.tag.outputs.new_tag == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -71,7 +81,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node }}
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Configure npm authentication
@@ -84,7 +94,22 @@ jobs:
           echo "always-auth=true" >> .npmrc
           echo ".npmrc created successfully."
 
+      - name: Guard against duplicate publish
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          NAME="$(node -p 'require("./package.json").name')"
+          VER="$(node -p 'require("./package.json").version')"
+          if npm view "${NAME}@${VER}" version >/dev/null 2>&1; then
+            echo "${NAME}@${VER} already exists on npm. Skipping publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish package
+        if: steps.guard.outputs.skip != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
