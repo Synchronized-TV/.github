@@ -14,13 +14,6 @@ on:
         default: "24"     # Node.js version to use
 
 # ------------------------------------------------------------
-# 🔒 Principle of least privilege
-# - Default: read-only
-# - Job-level elevation only when necessary
-# ------------------------------------------------------------
-permissions: read-all
-
-# ------------------------------------------------------------
 # ⚙️ Prevent concurrent runs on the same repo/base
 # ------------------------------------------------------------
 concurrency:

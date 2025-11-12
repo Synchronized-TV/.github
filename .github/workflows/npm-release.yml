@@ -11,13 +11,6 @@ on:
         required: true
 
 # ------------------------------------------------------------
-# 🔒 Principle of least privilege
-# - Default: read-only
-# - Job-level elevation only when necessary
-# ------------------------------------------------------------
-permissions: read-all
-
-# ------------------------------------------------------------
 # ⚙️ Prevent concurrent runs on the same ref
 # ------------------------------------------------------------
 concurrency:
@@ -66,6 +59,7 @@ jobs:
         shell: bash
         env:
           NPM_CONFIG_IGNORE_SCRIPTS: "true"
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
@@ -84,12 +78,17 @@ jobs:
             exit 0
           fi
 
-          # Ensure tag does not already exist
           TAG="v${CUR}"
-          git fetch --tags
+
+          # Configure authenticated remote for fetch & push
+          git remote add origin-auth "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          # Ensure tag does not already exist (remote tags)
+          git fetch origin-auth --tags
           if git rev-parse "${TAG}" >/dev/null 2>&1; then
             echo "ℹ️ Tag ${TAG} already exists — skipping."
             echo "new_tag=false" >> "$GITHUB_OUTPUT"
+            git remote remove origin-auth || true
             exit 0
           fi
 
@@ -99,7 +98,6 @@ jobs:
           git tag -a "${TAG}" -m "${TAG}"
 
           echo "🚀 Pushing tag ${TAG}"
-          git remote add origin-auth "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
           git push origin-auth "refs/tags/${TAG}:refs/tags/${TAG}"
           git remote remove origin-auth || true
 
@@ -115,7 +113,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read         # read-only access to repo
-      id-token: write        # required for npm provenance attestations
 
     steps:
       # ------------------------------------------------------------
@@ -183,7 +180,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "🚀 Publishing package to npm..."
-          npm publish --provenance
+          npm publish
           echo "✅ Publish completed successfully!"
 
       # ------------------------------------------------------------
