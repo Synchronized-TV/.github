@@ -16,7 +16,7 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 
 | Type | Description |
 |------|--------------|
-| **Workflows** | Reusable CI/CD pipelines for versioning and publishing |
+| **Workflows** | Reusable CI/CD pipelines |
 | **Templates** | Pull Request, Issue, and Security Incident templates |
 | **Security Policy** | Guidelines for reporting and managing vulnerabilities |
 | **Contributing Guide** | Organization-wide contribution rules and conventions |
@@ -25,6 +25,8 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 
 ## ⚙️ Reusable Workflows
 
+For **security and reproducibility**, always reference reusable workflows using a **commit SHA**, not a branch (`@main`) or tag (`@v1`).
+
 ### 🔁 `bump-version-pr.yml`
 Creates a Pull Request that bumps the version (`patch`, `minor`, or `major`) without publishing.
 
@@ -32,27 +34,7 @@ Creates a Pull Request that bumps the version (`patch`, `minor`, or `major`) wit
 On merge to `main`, tags the release and publishes the package to npm.
 
 #### Example usage
-To use a workflow from this repository in another project:
-
-```yaml
-name: release
-on:
-  workflow_dispatch:
-    inputs:
-      bump:
-        description: "Version type"
-        type: choice
-        options: [patch, minor, major]
-        default: patch
-
-jobs:
-  release:
-    uses: Synchronized-TV/.github/.github/workflows/bump-version-pr.yml@main
-    with:
-      bump: ${{ inputs.bump }}
-      node: "20"
-    secrets: inherit
-```
+To use a workflow from this repository in another project, visit the dedicated `release-template` repository.
 
 ---
 
@@ -78,8 +60,6 @@ The following protections apply to all repositories within **Synchronized-TV**:
 - **Dependabot** for dependency monitoring  
 - **Secret Scanning & Push Protection** to prevent credential leaks  
 - **Dependency Review** visible in PRs before merge  
-
-> 🔒 For sensitive operational procedures (e.g., token rotation, internal audit logs), refer to the **private** repository [Synchronized-TV/.internal](https://github.com/Synchronized-TV/.internal).
 
 ---
 
