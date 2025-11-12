@@ -11,64 +11,80 @@ on:
         default: "main"
       node:
         type: string
-        default: "20"
-    secrets:
-      NPM_TOKEN:
-        required: true
+        default: "24"     # Node.js version to use
 
-permissions:
-  contents: write
-  pull-requests: write
+# ------------------------------------------------------------
+# 🔒 Principle of least privilege
+# - Default: read-only
+# - Job-level elevation only when necessary
+# ------------------------------------------------------------
+permissions: read-all
+
+# ------------------------------------------------------------
+# ⚙️ Prevent concurrent runs on the same repo/base
+# ------------------------------------------------------------
+concurrency:
+  group: bump-version-pr-${{ github.repository }}-${{ inputs.base }}
+  cancel-in-progress: false
 
 jobs:
+  # ------------------------------------------------------------
+  # 1️⃣ Bump package version and open a PR
+  # ------------------------------------------------------------
   bump:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
+    # Elevate only what this job needs
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write   # needed if you want labels applied on the PR
 
     steps:
       # ------------------------------------------------------------
-      # 1️⃣ Checkout full repo history (needed for version bump)
+      # 1. Checkout full repo history (needed for version bump)
+      #    - Do not persist credentials; push will use an explicit remote
       # ------------------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       # ------------------------------------------------------------
-      # 2️⃣ Setup Node.js environment
+      # 2. Setup Node.js environment
       # ------------------------------------------------------------
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: ${{ inputs.node }}
           registry-url: "https://registry.npmjs.org/"
 
       # ------------------------------------------------------------
-      # 3️⃣ Bump the version number in package.json
-      #     - Does not create git tags
-      #     - Reads new version and sets output
+      # 3. Bump the version in package.json (no git tag)
+      #    - Disable npm lifecycle scripts for safety
       # ------------------------------------------------------------
       - name: Bump version (no tag)
         id: bump
         shell: bash
+        env:
+          NPM_CONFIG_IGNORE_SCRIPTS: "true"
         run: |
           set -euo pipefail
           echo "🔧 Bumping version: ${{ inputs.bump }}"
-
           npm version "${{ inputs.bump }}" --no-git-tag-version
-
-          # Extract new version from package.json
           ver=$(node -p "require('./package.json').version")
           printf 'ver=%s\n' "$ver" >> "$GITHUB_OUTPUT"
-
           echo "📦 New version: v$ver"
 
       # ------------------------------------------------------------
-      # 4️⃣ Commit and push version bump
-      #     - Creates a dedicated release branch
-      #     - Adds package.json and any lockfile present
+      # 4. Commit and push the bump
+      #    - Create a release branch and push via explicit HTTPS remote
       # ------------------------------------------------------------
       - name: Commit and push bump branch
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           ver=${{ steps.bump.outputs.ver }}
@@ -86,22 +102,23 @@ jobs:
           done
 
           if git diff --cached --quiet; then
-            echo "ℹ️ No changes to commit. Exiting."
+            echo "ℹ️ No changes to commit — exiting."
             exit 0
           fi
 
           git commit -m "chore(release): v${ver}"
-          git push -u origin "$BR"
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+          # Push via an ephemeral remote using GITHUB_TOKEN
+          git remote add origin-auth "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push -u origin-auth "$BR"
+          git remote remove origin-auth || true
 
       # ------------------------------------------------------------
-      # 5️⃣ Create or update PR via GitHub Script
-      #     - Replaces peter-evans/create-pull-request
-      #     - Fully self-contained
+      # 5. Create or update the PR via GitHub Script
+      #    - Labels are best-effort (won't fail the job)
       # ------------------------------------------------------------
       - name: Create PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -113,23 +130,17 @@ jobs:
             const body = `Automated version bump to v${version}`;
 
             try {
-              const pr = await github.rest.pulls.create({
-                owner,
-                repo,
-                head: branch,
-                base,
-                title,
-                body
-              });
-
+              const pr = await github.rest.pulls.create({ owner, repo, head: branch, base, title, body });
               core.info(`✅ Created PR: ${pr.data.html_url}`);
 
-              await github.rest.issues.addLabels({
-                owner,
-                repo,
-                issue_number: pr.data.number,
-                labels: ["release"]
-              });
+              // Best-effort label (doesn't fail if missing permission/label)
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: pr.data.number, labels: ["release"]
+                });
+              } catch {
+                core.info("ℹ️ Skipping label (missing permission or label)");
+              }
             } catch (error) {
               if (error.status === 422) {
                 core.info("ℹ️ PR already exists or no changes detected — skipping");

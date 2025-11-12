@@ -5,46 +5,81 @@ on:
     inputs:
       node:
         type: string
-        default: '20'
+        default: "24" # Node.js version to use
     secrets:
       NPM_TOKEN:
         required: true
 
-permissions:
-  contents: write      # Required to push tags to the repository
+# ------------------------------------------------------------
+# 🔒 Principle of least privilege
+# - Default: read-only
+# - Job-level elevation only when necessary
+# ------------------------------------------------------------
+permissions: read-all
+
+# ------------------------------------------------------------
+# ⚙️ Prevent concurrent runs on the same ref
+# ------------------------------------------------------------
+concurrency:
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  # -------------------------------
-  # Create tag only if the version changed
-  # -------------------------------
+  # ------------------------------------------------------------
+  # 1️⃣ Create Git tag if package.json version changed
+  # ------------------------------------------------------------
   tag:
-    runs-on: ubuntu-latest
-    outputs:
-      new_tag: ${{ steps.state.outputs.new_tag }}   # 'true' if a new tag was created during this run
-      version: ${{ steps.state.outputs.version }}   # current version from package.json
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Required to read previous commit and push tags
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # Required to push new tags
 
-      - name: Compute tag state (compare versions and create tag if needed)
+    outputs:
+      new_tag: ${{ steps.state.outputs.new_tag }}   # 'true' if a new tag was created
+      version: ${{ steps.state.outputs.version }}   # current version from package.json
+
+    steps:
+      # ------------------------------------------------------------
+      # 1. Checkout full repository (required to read history & tags)
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # ------------------------------------------------------------
+      # 2. Setup Node.js environment
+      #     - Required to read version with `node -p`
+      # ------------------------------------------------------------
+      - name: Setup Node
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: ${{ inputs.node }}
+
+      # ------------------------------------------------------------
+      # 3. Compute tag state (compare versions and create tag if needed)
+      #     - Reads current and previous package.json versions
+      #     - Creates and pushes a new tag if changed
+      # ------------------------------------------------------------
+      - name: Compute tag state
         id: state
         shell: bash
+        env:
+          NPM_CONFIG_IGNORE_SCRIPTS: "true"
         run: |
           set -euo pipefail
 
-          # Read current version from package.json on the current commit
+          # Read current version
           CUR="$(node -p 'require("./package.json").version')"
           echo "version=${CUR}" >> "$GITHUB_OUTPUT"
 
-          # Read previous version (from previous commit), fallback to empty if not available
+          # Read previous version (from previous commit)
           PREV="$(git show HEAD^:package.json 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).version)}catch{console.log("")}})')"
           echo "Current: ${CUR} | Previous: ${PREV}"
 
-          # If version did not change, skip tagging/publishing
+          # Skip if version unchanged
           if [ "${CUR}" = "${PREV}" ]; then
-            echo "No version change detected. Skipping tag and publish."
+            echo "ℹ️ No version change detected — skipping tag creation."
             echo "new_tag=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -53,66 +88,109 @@ jobs:
           TAG="v${CUR}"
           git fetch --tags
           if git rev-parse "${TAG}" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists. Skipping creation."
+            echo "ℹ️ Tag ${TAG} already exists — skipping."
             echo "new_tag=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Create and push the new tag (push tag ref only, no branch push)
+          # Create and push new tag
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${TAG}" -m "${TAG}"
-          git push origin "refs/tags/${TAG}:refs/tags/${TAG}"
 
-          echo "Created tag ${TAG}"
+          echo "🚀 Pushing tag ${TAG}"
+          git remote add origin-auth "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin-auth "refs/tags/${TAG}:refs/tags/${TAG}"
+          git remote remove origin-auth || true
+
+          echo "✅ Created tag ${TAG}"
           echo "new_tag=true" >> "$GITHUB_OUTPUT"
 
-  # -------------------------------
-  # Publish package to npm (only when a new tag was created)
-  # -------------------------------
+  # ------------------------------------------------------------
+  # 2️⃣ Publish package to npm (only if a new tag was created)
+  # ------------------------------------------------------------
   publish:
     needs: tag
     if: needs.tag.outputs.new_tag == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read         # read-only access to repo
+      id-token: write        # required for npm provenance attestations
 
+    steps:
+      # ------------------------------------------------------------
+      # 1. Checkout repository
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+
+      # ------------------------------------------------------------
+      # 2. Setup Node.js environment
+      # ------------------------------------------------------------
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: ${{ inputs.node }}
-          registry-url: 'https://registry.npmjs.org/'
+          registry-url: "https://registry.npmjs.org/"
 
+      # ------------------------------------------------------------
+      # 3. Configure npm authentication
+      #     - Creates a temporary .npmrc with NPM_TOKEN
+      # ------------------------------------------------------------
       - name: Configure npm authentication
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "registry=https://registry.npmjs.org/" > .npmrc
-          echo "@synchronized:registry=https://registry.npmjs.org/" >> .npmrc
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-          echo ".npmrc created successfully."
+          set -euo pipefail
+          {
+            echo "registry=https://registry.npmjs.org/"
+            echo "@synchronized:registry=https://registry.npmjs.org/"
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+            echo "always-auth=true"
+          } > .npmrc
+          echo "✅ .npmrc configured successfully."
 
+      # ------------------------------------------------------------
+      # 4. Guard against duplicate publish
+      #     - Skips if version already exists on npm
+      # ------------------------------------------------------------
       - name: Guard against duplicate publish
         id: guard
         shell: bash
+        env:
+          NPM_CONFIG_IGNORE_SCRIPTS: "true"
         run: |
           set -euo pipefail
           NAME="$(node -p 'require("./package.json").name')"
           VER="$(node -p 'require("./package.json").version')"
           if npm view "${NAME}@${VER}" version >/dev/null 2>&1; then
-            echo "${NAME}@${VER} already exists on npm. Skipping publish."
+            echo "ℹ️ ${NAME}@${VER} already exists on npm — skipping publish."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # ------------------------------------------------------------
+      # 5. Publish package to npm
+      #     - Disabled lifecycle scripts for safety
+      #     - Adds provenance (optional, via OIDC)
+      # ------------------------------------------------------------
       - name: Publish package
         if: steps.guard.outputs.skip != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_IGNORE_SCRIPTS: "true"
         run: |
-          echo "Publishing package to npm..."
-          npm publish
+          set -euo pipefail
+          echo "🚀 Publishing package to npm..."
+          npm publish --provenance
           echo "✅ Publish completed successfully!"
+
+      # ------------------------------------------------------------
+      # 6. Cleanup sensitive files
+      # ------------------------------------------------------------
+      - name: Cleanup .npmrc
+        if: always()
+        run: |
+          rm -f .npmrc || true
+          echo "🧹 Cleaned up temporary authentication file."
