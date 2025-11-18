@@ -1,86 +1,157 @@
 # 🤝 Contributing to Synchronized-TV
 
-This guide defines how to contribute safely and consistently across all projects.
+This guide defines how to contribute **safely, consistently, and efficiently** across all repositories within the **Synchronized-TV** organization.
+
+It applies to all developers, contributors, and contractors working on code, documentation, workflows, and shared tooling.
 
 ---
 
-## 🧭 Scope
+# 🧭 Scope
 
-These guidelines apply to **all repositories** under the **Synchronized-TV** organization.  
-They cover documentation, code, workflows, and shared configurations.
+These contribution rules apply to every repository under the `Synchronized-TV` GitHub organization, including:
 
----
+- Platform code
+- Frontend & backend services
+- Internal libraries and npm packages
+- Documentation & configuration repositories
+- GitHub Actions workflows
 
-## 🧱 Contribution Types
-
-| Type | Example | Commit prefix |
-|------|----------|----------------|
-| 🧾 **Docs** | Update `README.md`, `SECURITY.md`, `docs/*.md` | `docs(...)` |
-| ⚙️ **Workflows** | Edit `.github/workflows/*.yml` | `chore(workflow):` |
-| 🔧 **Code / Config** | Improve features or refactor | `feat(...)`, `fix(...)`, `refactor(...)` |
-| 🧩 **Design System / Packages** | Update shared libraries or npm modules | `chore(release):`, `fix:`, `feat:` |
+The goal is to ensure **quality**, **security**, and **traceability** across our SDLC.
 
 ---
 
-## 🌿 Branch Naming Convention
+# 🧱 Contribution Types
 
-Use clear, lowercase, hyphen-separated names.  
-Prefixes indicate the type of work being done:
+| Type                        | Example                                        | Commit prefix                            |
+| --------------------------- | ---------------------------------------------- | ---------------------------------------- |
+| 🧾 **Docs**                 | Update `README.md`, `SECURITY.md`, `docs/*.md` | `docs(...)`                              |
+| ⚙️ **Workflows**            | Update `.github/workflows/*.yml`               | `chore(workflow):`                       |
+| 🔧 **Code / Config**        | Features, fixes, refactors                     | `feat(...)`, `fix(...)`, `refactor(...)` |
+| 🧩 **Libraries / Packages** | Internal npm modules                           | `feat:`, `fix:`, `chore(release):`       |
 
-| Prefix | Example | Purpose |
-|---------|----------|----------|
-| `feat/` | `feat/video-editor-annotations` | New feature |
-| `fix/` | `fix/api-refresh-token` | Bug fix |
-| `chore/` | `chore/update-dependencies` | Maintenance, CI, dependencies |
-| `docs/` | `docs/contributing-update` | Documentation only |
-| `refactor/` | `refactor/player-context` | Code refactor without behavior change |
-| `release/` | `release/1.2.0` | Release preparation branch |
-| `hotfix/` | `hotfix/1.2.1` | Urgent production fix |
-
-### ✅ Rules
-- Use **lowercase** and **hyphens**, never underscores or camelCase.  
-- Keep names **short and descriptive**.  
-- Avoid including your name or initials — the branch history identifies authors.  
-- Delete feature branches after merge to keep the repository clean.
+We follow **Conventional Commits** for consistent history and automated releases.
 
 ---
 
-## 💬 Pull Requests
+# 🌿 Branch Naming Convention
 
-- Always work in a feature branch.  
-- Keep PRs **atomic** — one clear purpose per PR.  
-- Provide a meaningful **title and description** in English.  
-- Request review from at least one teammate before merging.  
-- **Do not commit directly to `main`** on protected repositories.
+Branches must be **clear, lowercase, hyphen-separated**.
 
-> 💡 For workflow or release changes, open PRs in the relevant repo and wait for approval before merging.
+| Prefix      | Example                         | Purpose                          |
+| ----------- | ------------------------------- | -------------------------------- |
+| `feat/`     | `feat/video-editor-annotations` | New feature                      |
+| `fix/`      | `fix/api-refresh-token`         | Bug fix                          |
+| `chore/`    | `chore/update-dependencies`     | Maintenance & CI                 |
+| `docs/`     | `docs/contributing-update`      | Documentation                    |
+| `refactor/` | `refactor/player-context`       | Refactor without behavior change |
+| `release/`  | `release/1.2.0`                 | Release preparation              |
+| `hotfix/`   | `hotfix/1.2.1`                  | Critical production fix          |
+
+**Rules:**
+
+- Do not use camelCase or underscores.
+- Keep names short and descriptive.
+- Do not include personal names.
+- Delete feature branches after merge.
 
 ---
 
-## 🧩 Commit Conventions
+# 💬 Pull Requests
 
-Follow the **[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** standard.
+All work must go through a **Pull Request**.
 
-Examples:
+### PR rules
+
+- One purpose per PR (atomic).
+- English title and description.
+- CI must pass before review.
+- At least **one approval** required before merging.
+- No direct commits to `main` on protected repositories.
+- Workflow/release changes must be reviewed by maintainers.
+
+---
+
+# 🧩 Commit Conventions
+
+We use **Conventional Commits**:  
+https://www.conventionalcommits.org/en/v1.0.0/
+
+**Examples:**
+
 ```bash
 docs(readme): clarify publish process
-feat(video-editor): add frame preview on hover
-chore(workflow): add reusable bump-version action
-fix(api): handle 401 refresh token edge case
+feat(editor): add frame preview on hover
+chore(workflow): add bump-version composite action
+fix(api): correct refresh token flow
+refactor(auth): simplify token handling
 ```
 
 ---
 
-## 🛡️ Security
+# 🛡 Security Requirements
 
-- Never commit secrets, tokens, or credentials.  
-- If you find a security issue, **do not open a public issue** — contact  
-  **security@synchronized.tv** or report via **Slack `#alert-security`**.  
-- All repositories have **Dependabot**, **CodeQL**, and **Secret Scanning** enabled.
+Security is part of our SDLC.
+
+### Mandatory rules
+
+- Never commit credentials, tokens, certificates, or secrets.
+- Never hardcode environment variables.
+- Never log sensitive or client-related data.
+- Do not upload client content or internal assets to public platforms.
+
+### Protections
+
+- GitHub **Secret Scanning**, **Dependabot**, **CodeQL**, and **Dependency Review** are enabled.
+- Secrets must be stored in secure vaults (Bitwarden) or GitHub encrypted secrets.
+- New dependencies must be evaluated for security, size, and licensing.
+
+### Reporting security issues
+
+If you discover a vulnerability:
+
+➡ **Do NOT open a public issue**  
+➡ Email **security@synchronized.tv**  
+➡ Or report privately via Slack `#alert-security`
 
 ---
 
-## 🧾 License
+# 🔐 SDLC & Code Quality Standards
 
-All repositories are private to **Synchronized-TV** unless stated otherwise.  
-Do not distribute code, documentation, or assets outside the organization.
+All contributions must follow Synchronized’s internal SDLC principles, including:
+
+- Secure coding practices (OWASP Top 10 awareness)
+- Clean, maintainable, and documented code
+- Purposeful logging only
+- No unused or unmaintained dependencies
+- Proper error handling
+- Tests updated when logic changes
+
+---
+
+# 📦 Dependencies
+
+- Use existing libraries when possible.
+- New dependencies must be justified and reviewed based on:
+  - Security & maintenance
+  - License compatibility
+  - Bundle size / performance
+  - Necessity
+
+---
+
+# 🏗 Development Workflow (Simplified)
+
+1. Create your feature branch
+2. Implement changes
+3. Run tests & linting
+4. Open a PR
+5. Request review
+6. Apply feedback
+7. Merge after approval
+
+---
+
+# 🧾 License & Confidentiality
+
+- All Synchronized-TV repositories are **private by default**.
+- Code, documentation, workflows, and assets must **not be shared externally**.

@@ -5,20 +5,29 @@ labels: ["enhancement"]
 ---
 
 ### ✨ Problem or Need
+
 Describe what problem this feature would solve.
 
 ### 🧠 Proposed Solution
+
 Shortly describe the idea or improvement.
 
 ### 🎛 Scope
-- [ ] Frontend  
-- [ ] Backend  
-- [ ] Infrastructure  
-- [ ] Data / API  
+
+- [ ] Frontend
+- [ ] Backend
+- [ ] Infrastructure
+- [ ] Data / API
+- [ ] Shared / Core
+- [ ] Documentation
+- [ ] DevOps / CI-CD
+- [ ] Security
 
 ### ✅ Acceptance Criteria
-1.  
-2.  
+
+1.
+2.
 
 ### ⚠️ Security / Data Impact
+
 If applicable, describe potential impacts.

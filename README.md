@@ -6,20 +6,20 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 
 ## 🎯 Objectives
 
-- Standardize Pull Requests, Issues, and CI/CD workflows  
-- Integrate essential GitHub security controls into the development process  
-- Simplify onboarding, maintenance, and release automation  
+- Standardize Pull Requests, Issues, and CI/CD workflows
+- Integrate essential GitHub security controls into the development process
+- Simplify onboarding, maintenance, and release automation
 
 ---
 
 ## 🧩 Contents
 
-| Type | Description |
-|------|--------------|
-| **Workflows** | Reusable CI/CD pipelines |
-| **Templates** | Pull Request, Issue, and Security Incident templates |
-| **Security Policy** | Guidelines for reporting and managing vulnerabilities |
-| **Contributing Guide** | Organization-wide contribution rules and conventions |
+| Type                   | Description                                           |
+| ---------------------- | ----------------------------------------------------- |
+| **Workflows**          | Reusable CI/CD pipelines                              |
+| **Templates**          | Pull Request, Issue, and Security Incident templates  |
+| **Security Policy**    | Guidelines for reporting and managing vulnerabilities |
+| **Contributing Guide** | Organization-wide contribution rules and conventions  |
 
 ---
 
@@ -28,12 +28,15 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 For **security and reproducibility**, always reference reusable workflows using a **commit SHA**, not a branch (`@main`) or tag (`@v1`).
 
 ### 🔁 `bump-version-pr.yml`
+
 Creates a Pull Request that bumps the version (`patch`, `minor`, or `major`) without publishing.
 
 ### 🚀 `npm-release.yml`
+
 On merge to `main`, tags the release and publishes the package to npm.
 
 #### Example usage
+
 To use a workflow from this repository in another project, visit the dedicated `release-template` repository.
 
 ---
@@ -43,6 +46,7 @@ To use a workflow from this repository in another project, visit the dedicated `
 Organization-wide contribution guidelines are defined in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 All repositories follow the same rules for:
+
 - **Branch naming** (`feat/`, `fix/`, `chore/`, `release/`, etc.)
 - **Commit conventions** (using [Conventional Commits](https://www.conventionalcommits.org/))
 - **Pull request reviews** and **security policies**
@@ -55,24 +59,24 @@ All repositories follow the same rules for:
 
 The following protections apply to all repositories within **Synchronized-TV**:
 
-- **Branch protection rules** on `main` (and optionally `release/*`)  
-- **CodeQL** static analysis on Pull Requests  
-- **Dependabot** for dependency monitoring  
-- **Secret Scanning & Push Protection** to prevent credential leaks  
-- **Dependency Review** visible in PRs before merge  
+- **Branch protection rules** on `main` (and optionally `release/*`)
+- **CodeQL** static analysis on Pull Requests
+- **Dependabot** for dependency monitoring
+- **Secret Scanning & Push Protection** to prevent credential leaks
+- **Dependency Review** visible in PRs before merge
 
 ---
 
 ## 🔗 Reference Files
 
-| File | Purpose |
-|------|----------|
-| [Security Policy](./SECURITY.md) | How to report and handle vulnerabilities |
-| [Contributing Guide](./CONTRIBUTING.md) | Organization-wide contribution standards |
-| [Pull Request Template](./PULL_REQUEST_TEMPLATE.md) | Standard PR format for all repositories |
-| [Issue Templates](./ISSUE_TEMPLATE/) | Default issue templates (bug, feature, etc.) |
-| [Reusable Workflows](./.github/workflows/) | Shared release and publish workflows |
-| [CODEOWNERS (fallback)](./CODEOWNERS) | Default ownership and review rules |
+| File                                                | Purpose                                      |
+| --------------------------------------------------- | -------------------------------------------- |
+| [Security Policy](./SECURITY.md)                    | How to report and handle vulnerabilities     |
+| [Contributing Guide](./CONTRIBUTING.md)             | Organization-wide contribution standards     |
+| [Pull Request Template](./PULL_REQUEST_TEMPLATE.md) | Standard PR format for all repositories      |
+| [Issue Templates](./.github/ISSUE_TEMPLATE/)        | Default issue templates (bug, feature, etc.) |
+| [Reusable Workflows](./.github/workflows/)          | Shared release and publish workflows         |
+| [CODEOWNERS (fallback)](./CODEOWNERS)               | Default ownership and review rules           |
 
 ---
 
