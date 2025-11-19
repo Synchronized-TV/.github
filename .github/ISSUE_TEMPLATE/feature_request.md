@@ -23,11 +23,6 @@ Shortly describe the idea or improvement.
 - [ ] DevOps / CI-CD
 - [ ] Security
 
-### ✅ Acceptance Criteria
-
-1.
-2.
-
 ### ⚠️ Security / Data Impact
 
 If applicable, describe potential impacts.
