@@ -60,6 +60,8 @@ Branches must be **clear, lowercase, hyphen-separated**.
 
 All work must go through a **Pull Request**.
 
+If your work relates to an Issue, reference it in the PR description using GitHub keywords (e.g., “Fixes #123”) so the Issue auto-closes when the PR is merged.
+
 ### PR rules
 
 - One purpose per PR (atomic).
@@ -76,14 +78,16 @@ All work must go through a **Pull Request**.
 We use **Conventional Commits**:  
 https://www.conventionalcommits.org/en/v1.0.0/
 
+When a commit references an Issue, append the Issue number at the end (e.g., `(#123)`) to keep history consistent with the PR’s “Linked issue” section.
+
 **Examples:**
 
 ```bash
-docs(readme): clarify publish process
-feat(editor): add frame preview on hover
-chore(workflow): add bump-version composite action
-fix(api): correct refresh token flow
-refactor(auth): simplify token handling
+docs(readme): clarify publish process (#45)
+feat(editor): add frame preview on hover (#112)
+chore(workflow): add bump-version composite action (#88)
+fix(api): correct refresh token flow (#67)
+refactor(auth): simplify token handling (#102)
 ```
 
 ---
