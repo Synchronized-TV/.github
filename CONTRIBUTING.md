@@ -106,7 +106,7 @@ Security is part of our SDLC.
 ### Protections
 
 - GitHub **Secret Scanning**, **Dependabot**, **CodeQL**, and **Dependency Review** are enabled.
-- Secrets must be stored in secure vaults (Bitwarden) or GitHub encrypted secrets.
+- Secrets must be stored in approved secret stores or GitHub encrypted secrets (CI only).
 - New dependencies must be evaluated for security, size, and licensing.
 
 ### Reporting security issues
@@ -115,7 +115,7 @@ If you discover a vulnerability:
 
 ➡ **Do NOT open a public issue**  
 ➡ Email **security@synchronized.tv**  
-➡ Or report privately via Slack `#alert-security`
+➡ Follow the reporting instructions in [`SECURITY.md`](./SECURITY.md)
 
 ---
 
@@ -157,5 +157,5 @@ All contributions must follow Synchronized’s internal SDLC principles, includi
 
 # 🧾 License & Confidentiality
 
-- All Synchronized-TV repositories are **private by default**.
-- Code, documentation, workflows, and assets must **not be shared externally**.
+- Most Synchronized-TV repositories are **private by default** (some are public, like `Synchronized-TV/.github`).
+- Do not share internal-only code, documentation, workflows, assets, or operational details outside approved channels.
