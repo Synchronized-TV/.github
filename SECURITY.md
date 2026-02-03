@@ -2,26 +2,36 @@
 
 Please **do not create a public issue** to report a vulnerability.
 
+---
+
 ## 📢 Reporting
 
-If you discover a security issue or vulnerability:
+If you discover a security issue or vulnerability affecting any repository under the
+**Synchronized-TV GitHub organization**:
 
-- Email: **security@synchronized.tv**  
-- Message: **Slack `#alert-security`**  
-- For confirmed incidents: use **Incident.io**
+- 📧 Email: **security@synchronized.tv**
 
-We respond within **one business day (24h)**.
-
----
-
-## ⚙️ Monitoring
-
-- **Dependabot**, **CodeQL**, and **Secret Scanning** are active on all repositories.  
-- Alerts are automatically forwarded to **Slack `#alert-security`**.  
-- Confirmed incidents are tracked in **Incident.io** until resolution.
+We acknowledge and respond within **one business day (24h)**.
 
 ---
 
-## 🔒 Internal Notes
+## ⚙️ Monitoring & Detection
 
-Sensitive procedures (e.g., token rotation, audit logs) are managed in the **private** repository [Synchronized-TV/.internal](https://github.com/Synchronized-TV/.internal).
+- **Dependabot**, **CodeQL**, and **GitHub Secret Scanning** are enabled on all repositories.
+
+---
+
+## 🚨 Incident Management
+
+Confirmed incidents are handled and tracked internally until resolution.
+
+---
+
+## 🔒 Internal Procedures
+
+This public document intentionally omits sensitive operational details.
+
+Confidential procedures (e.g. credential rotation, audit evidence,
+incident playbooks) are maintained in the **private repository**:
+
+👉 https://github.com/Synchronized-TV/.internal

@@ -17,7 +17,7 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 | Type                   | Description                                           |
 | ---------------------- | ----------------------------------------------------- |
 | **Workflows**          | Reusable CI/CD pipelines                              |
-| **Templates**          | Pull Request, Issue, and Security Incident templates  |
+| **Templates**          | Pull Request and Issue templates                      |
 | **Security Policy**    | Guidelines for reporting and managing vulnerabilities |
 | **Contributing Guide** | Organization-wide contribution rules and conventions  |
 
@@ -37,7 +37,7 @@ On merge to `main`, tags the release and publishes the package to npm.
 
 #### Example usage
 
-To use a workflow from this repository in another project, visit the dedicated `release-template` repository.
+Workflow usage examples are maintained internally (private repository).
 
 ---
 
@@ -64,6 +64,15 @@ The following protections apply to all repositories within **Synchronized-TV**:
 - **Dependabot** for dependency monitoring
 - **Secret Scanning & Push Protection** to prevent credential leaks
 - **Dependency Review** visible in PRs before merge
+
+---
+
+## ✅ Compliance & Operations
+
+Synchronized’s engineering practices are aligned with the Trusted Partner Network (TPN) / MPA Content Security Best Practices at a principles level.
+
+Operational procedures and audit evidence are maintained in the private repository:
+https://github.com/Synchronized-TV/.internal
 
 ---
 
