@@ -1,10 +1,10 @@
-# 🧭 Synchronized — Shared Workflows, Templates & Security
+# Synchronized -- Shared Workflows, Templates & Security
 
 This repository centralizes the **shared workflows**, **templates**, and **security references** used across all repositories within **Synchronized-TV**.
 
 ---
 
-## 🎯 Objectives
+## Objectives
 
 - Standardize Pull Requests, Issues, and CI/CD workflows
 - Integrate essential GitHub security controls into the development process
@@ -12,7 +12,7 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 
 ---
 
-## 🧩 Contents
+## Contents
 
 | Type                   | Description                                           |
 | ---------------------- | ----------------------------------------------------- |
@@ -23,15 +23,15 @@ This repository centralizes the **shared workflows**, **templates**, and **secur
 
 ---
 
-## ⚙️ Reusable Workflows
+## Reusable Workflows
 
 For **security and reproducibility**, always reference reusable workflows using a **commit SHA**, not a branch (`@main`) or tag (`@v1`).
 
-### 🔁 `bump-version-pr.yml`
+### `bump-version-pr.yml`
 
 Creates a Pull Request that bumps the version (`patch`, `minor`, or `major`) without publishing.
 
-### 🚀 `npm-release.yml`
+### `npm-release.yml`
 
 On merge to `main`, tags the release and publishes the package to npm.
 
@@ -41,7 +41,7 @@ Workflow usage examples are maintained internally (private repository).
 
 ---
 
-## 🧭 Contributing
+## Contributing
 
 Organization-wide contribution guidelines are defined in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
@@ -51,11 +51,11 @@ All repositories follow the same rules for:
 - **Commit conventions** (using [Conventional Commits](https://www.conventionalcommits.org/))
 - **Pull request reviews** and **security policies**
 
-> 💡 See the contributing guide for naming rules, PR best practices, and security standards.
+> Note: See the contributing guide for naming rules, PR best practices, and security standards.
 
 ---
 
-## 🛡️ Automated Security (Organization Level)
+## Automated Security (Organization Level)
 
 The following protections apply to all repositories within **Synchronized-TV**:
 
@@ -67,16 +67,15 @@ The following protections apply to all repositories within **Synchronized-TV**:
 
 ---
 
-## ✅ Compliance & Operations
+## Compliance & Operations
 
-Synchronized’s engineering practices are aligned with the Trusted Partner Network (TPN) / MPA Content Security Best Practices at a principles level.
+Synchronized's engineering practices are aligned with the Trusted Partner Network (TPN) / MPA Content Security Best Practices at a principles level.
 
-Operational procedures and audit evidence are maintained in the private repository:
-https://github.com/Synchronized-TV/.internal
+Operational procedures and audit evidence are maintained in a private repository.
 
 ---
 
-## 🔗 Reference Files
+## Reference Files
 
 | File                                                | Purpose                                      |
 | --------------------------------------------------- | -------------------------------------------- |
@@ -89,7 +88,7 @@ https://github.com/Synchronized-TV/.internal
 
 ---
 
-## 🧭 About this Repository
+## About this Repository
 
 This `.github` repository acts as the **shared governance and automation hub** for all projects under the Synchronized-TV organization.  
 It ensures every repository benefits from the same CI/CD, security, and contribution standards.

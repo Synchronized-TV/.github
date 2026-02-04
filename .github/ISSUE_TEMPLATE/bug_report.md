@@ -4,15 +4,15 @@ about: Report a reproducible issue or malfunction
 labels: ["bug"]
 ---
 
-### 🐛 Description
+### Description
 **Expected behavior:**  
 **Observed behavior:**  
 
-### 🔬 Steps to Reproduce
+### Steps to Reproduce
 1.  
 2.  
 3.  
 
-### 🧩 Context
+### Context
 - Version / Environment:  
 - Logs / Screenshots:

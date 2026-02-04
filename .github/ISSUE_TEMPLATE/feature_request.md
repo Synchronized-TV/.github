@@ -4,15 +4,15 @@ about: Suggest a new feature or improvement
 labels: ["enhancement"]
 ---
 
-### ✨ Problem or Need
+### Problem or Need
 
 Describe what problem this feature would solve.
 
-### 🧠 Proposed Solution
+### Proposed Solution
 
 Shortly describe the idea or improvement.
 
-### 🎛 Scope
+### Scope
 
 - [ ] Frontend
 - [ ] Backend
@@ -23,6 +23,6 @@ Shortly describe the idea or improvement.
 - [ ] DevOps / CI-CD
 - [ ] Security
 
-### ⚠️ Security / Data Impact
+### Security / Data Impact
 
 If applicable, describe potential impacts.

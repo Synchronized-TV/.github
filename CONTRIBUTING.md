@@ -1,4 +1,4 @@
-# 🤝 Contributing to Synchronized-TV
+# Contributing to Synchronized-TV
 
 This guide defines how to contribute **safely, consistently, and efficiently** across all repositories within the **Synchronized-TV** organization.
 
@@ -6,7 +6,7 @@ It applies to all developers, contributors, and contractors working on code, doc
 
 ---
 
-# 🧭 Scope
+# Scope
 
 These contribution rules apply to every repository under the `Synchronized-TV` GitHub organization, including:
 
@@ -20,20 +20,20 @@ The goal is to ensure **quality**, **security**, and **traceability** across our
 
 ---
 
-# 🧱 Contribution Types
+# Contribution Types
 
-| Type                        | Example                                        | Commit prefix                            |
-| --------------------------- | ---------------------------------------------- | ---------------------------------------- |
-| 🧾 **Docs**                 | Update `README.md`, `SECURITY.md`, `docs/*.md` | `docs(...)`                              |
-| ⚙️ **Workflows**            | Update `.github/workflows/*.yml`               | `chore(workflow):`                       |
-| 🔧 **Code / Config**        | Features, fixes, refactors                     | `feat(...)`, `fix(...)`, `refactor(...)` |
-| 🧩 **Libraries / Packages** | Internal npm modules                           | `feat:`, `fix:`, `chore(release):`       |
+| Type                   | Example                                        | Commit prefix                            |
+| ---------------------- | ---------------------------------------------- | ---------------------------------------- |
+| **Docs**              | Update `README.md`, `SECURITY.md`, `docs/*.md` | `docs(...)`                              |
+| **Workflows**         | Update `.github/workflows/*.yml`               | `chore(workflow):`                       |
+| **Code / Config**     | Features, fixes, refactors                     | `feat(...)`, `fix(...)`, `refactor(...)` |
+| **Libraries / Packages** | Internal npm modules                        | `feat:`, `fix:`, `chore(release):`       |
 
 We follow **Conventional Commits** for consistent history and automated releases.
 
 ---
 
-# 🌿 Branch Naming Convention
+# Branch Naming Convention
 
 Branches must be **clear, lowercase, hyphen-separated**.
 
@@ -56,11 +56,11 @@ Branches must be **clear, lowercase, hyphen-separated**.
 
 ---
 
-# 💬 Pull Requests
+# Pull Requests
 
 All work must go through a **Pull Request**.
 
-If your work relates to an Issue, reference it in the PR description using GitHub keywords (e.g., “Fixes #123”) so the Issue auto-closes when the PR is merged.
+If your work relates to an Issue, reference it in the PR description using GitHub keywords (e.g., "Fixes #123") so the Issue auto-closes when the PR is merged.
 
 ### PR rules
 
@@ -73,12 +73,12 @@ If your work relates to an Issue, reference it in the PR description using GitHu
 
 ---
 
-# 🧩 Commit Conventions
+# Commit Conventions
 
 We use **Conventional Commits**:  
 https://www.conventionalcommits.org/en/v1.0.0/
 
-When a commit references an Issue, append the Issue number at the end (e.g., `(#123)`) to keep history consistent with the PR’s “Linked issue” section.
+When a commit references an Issue, append the Issue number at the end (e.g., `(#123)`) to keep history consistent with the PR's "Linked issue" section.
 
 **Examples:**
 
@@ -92,7 +92,7 @@ refactor(auth): simplify token handling (#102)
 
 ---
 
-# 🛡 Security Requirements
+# Security Requirements
 
 Security is part of our SDLC.
 
@@ -113,15 +113,15 @@ Security is part of our SDLC.
 
 If you discover a vulnerability:
 
-➡ **Do NOT open a public issue**  
-➡ Email **security@synchronized.tv**  
-➡ Follow the reporting instructions in [`SECURITY.md`](./SECURITY.md)
+- Do NOT open a public issue  
+- Email **security@synchronized.tv**  
+- Follow the reporting instructions in [`SECURITY.md`](./SECURITY.md)
 
 ---
 
-# 🔐 SDLC & Code Quality Standards
+# SDLC & Code Quality Standards
 
-All contributions must follow Synchronized’s internal SDLC principles, including:
+All contributions must follow Synchronized's internal SDLC principles, including:
 
 - Secure coding practices (OWASP Top 10 awareness)
 - Clean, maintainable, and documented code
@@ -132,7 +132,7 @@ All contributions must follow Synchronized’s internal SDLC principles, includi
 
 ---
 
-# 📦 Dependencies
+# Dependencies
 
 - Use existing libraries when possible.
 - New dependencies must be justified and reviewed based on:
@@ -143,7 +143,7 @@ All contributions must follow Synchronized’s internal SDLC principles, includi
 
 ---
 
-# 🏗 Development Workflow (Simplified)
+# Development Workflow (Simplified)
 
 1. Create your feature branch
 2. Implement changes
@@ -155,7 +155,7 @@ All contributions must follow Synchronized’s internal SDLC principles, includi
 
 ---
 
-# 🧾 License & Confidentiality
+# License & Confidentiality
 
 - Most Synchronized-TV repositories are **private by default** (some are public, like `Synchronized-TV/.github`).
 - Do not share internal-only code, documentation, workflows, assets, or operational details outside approved channels.
